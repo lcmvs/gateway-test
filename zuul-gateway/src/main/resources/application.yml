@@ -1,0 +1,22 @@
+server:
+  port: 14000
+
+spring:
+  application:
+    name: zuul-gateway
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7000/eureka/
+
+zuul:
+  routes:
+    consumer:
+      path: /consumer/**
+      serviceId: eureka-consumer
+    producer:
+      path: /producer/**
+      serviceId: eureka-producer
+
+
