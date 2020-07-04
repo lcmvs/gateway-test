@@ -1,0 +1,53 @@
+server:
+  port: 10000
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7000/eureka/
+
+spring:
+  application:
+    name: cloud-gateway
+  redis:
+    host: 119.29.246.230
+    port: 6379
+    password: lcming123
+    database: 2
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          #是否与服务注册于发现组件进行结合，通过 serviceId 转发到具体的服务实例。
+          #默认为 false，设为 true 便开启通过服务中心的自动根据 serviceId 创建路由的功能。
+          enabled: true
+          lowerCaseServiceId: true
+      routes:
+        - id: eureka-consumer
+          uri: lb://EUREKA-CONSUMER
+          predicates:
+            - Path=/api/consumer/**
+          filters:
+            - MyAuth=abcd,efg
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                #用于限流的键的解析器的 Bean 对象的名字。
+                #它使用 SpEL 表达式根据#{@beanName}从 Spring 容器中获取 Bean 对象。
+                #默认使用 PrincipalNameKeyResolver，以请求认证的 java.security.Principal 作为限流键。
+                key-resolver: '#{@uriKeyResolver}'
+                #令牌桶每秒填充平均速率
+                redis-rate-limiter.replenishRate: 1
+                #令牌桶总容量
+                redis-rate-limiter.burstCapacity: 1
+
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    #reactor.ipc.netty: DEBUG
+
+
+

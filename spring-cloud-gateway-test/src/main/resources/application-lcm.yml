@@ -1,0 +1,14 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7000/eureka/
+
+spring:
+  redis:
+    host: 119.29.246.230
+    port: 6379
+    password: lcming123
+    database: 2
+
+
+
